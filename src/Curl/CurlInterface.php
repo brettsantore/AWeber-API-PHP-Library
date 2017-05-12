@@ -1,12 +1,14 @@
 <?php namespace AWeber\Curl;
 
-interface CurlInterface {
+interface CurlInterface
+{
 
     /**
      * errNo
      *
      * Encapsulates curl_errno - Returns the last error number
-     * @param resource $ch - A cURL handle returned by init.
+     *
+     * @param  resource $ch - A cURL handle returned by init.
      * @access public
      * @return the error number or 0 if no error occured.
      */
@@ -16,7 +18,8 @@ interface CurlInterface {
      * error
      *
      * Encapsulates curl_error - Return last error string
-     * @param resource $ch - A cURL handle returned by init.
+     *
+     * @param  resource $ch - A cURL handle returned by init.
      * @access public
      * @return the error messge or '' if no error occured.
      */
@@ -26,7 +29,8 @@ interface CurlInterface {
      * execute
      *
      * Encapsulates curl_exec - Perform a cURL session.
-     * @param resource $ch - A cURL handle returned by init.
+     *
+     * @param  resource $ch - A cURL handle returned by init.
      * @access public
      * @return TRUE on success, FALSE on failure.
      */
@@ -36,7 +40,8 @@ interface CurlInterface {
      * init
      *
      * Encapsulates curl_init - Initialize a cURL session.
-     * @param string $url - url to use.
+     *
+     * @param  string $url - url to use.
      * @access public
      * @return cURL handle on success, FALSE on failure.
      */
@@ -46,11 +51,12 @@ interface CurlInterface {
      * setopt
      *
      * Encapsulates curl_setopt - Set an option for cURL transfer.
-     * @param resource $ch - A cURL handle returned by init.
-     * @param int $opt - The CURLOPT to set.
-     * @param mixed $value - The value to set.
+     *
+     * @param  resource $ch    - A cURL handle returned by init.
+     * @param  int      $opt   - The CURLOPT to set.
+     * @param  mixed    $value - The value to set.
      * @access public
      * @return True on success, FALSE on failure.
      */
-    public function setopt ($ch , $option , $value);
+    public function setopt($ch , $option , $value);
 }

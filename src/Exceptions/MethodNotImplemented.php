@@ -9,13 +9,15 @@
  * current resource type does not provide access to that method (ie calling
  * getByMessageNumber on a web_forms collection).
  *
- * @uses AWeberException
+ * @uses    AWeberException
  * @package
  * @version $id$
  */
-class MethodNotImplemented extends Exception {
+class MethodNotImplemented extends Exception
+{
 
-    public function __construct($object) {
+    public function __construct($object) 
+    {
         $this->object = $object;
         parent::__construct("This method is not implemented by the current resource.");
 

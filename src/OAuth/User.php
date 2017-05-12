@@ -46,13 +46,13 @@ class User
      */
     public function getHighestPriorityToken()
     {
-        if ( ! empty($this->accessToken)) {
+        if (! empty($this->accessToken)) {
             return $this->accessToken;
         }
-        if ( ! empty($this->authorizedToken)) {
+        if (! empty($this->authorizedToken)) {
             return $this->authorizedToken;
         }
-        if ( ! empty($this->requestToken)) {
+        if (! empty($this->requestToken)) {
             return $this->requestToken;
         }
 

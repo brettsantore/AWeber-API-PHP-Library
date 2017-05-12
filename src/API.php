@@ -8,11 +8,13 @@ use AWeber\OAuth\User;
  * Creates a connection to the AWeberAPI for a given consumer application.
  * This is generally the starting point for this library.  Instances can be
  * created directly with consumerKey and consumerSecret.
- * @uses AWeberAPIBase
+ *
+ * @uses    AWeberAPIBase
  * @package
  * @version $id$
  */
-class API extends APIBase {
+class API extends APIBase
+{
 
     /**
      * @var String Consumer Key
@@ -34,7 +36,8 @@ class API extends APIBase {
      *
      * @param String Authorization code from authorize app page
      */
-    public static function getDataFromAweberID($string) {
+    public static function getDataFromAweberID($string) 
+    {
         list($consumerKey, $consumerSecret, $requestToken, $tokenSecret, $verifier) = AWeberAPI::_parseAweberID($string);
 
         if (!$verifier) {
@@ -48,7 +51,8 @@ class API extends APIBase {
         return array($consumerKey, $consumerSecret, $accessToken, $accessSecret);
     }
 
-    protected static function _parseAWeberID($string) {
+    protected static function _parseAWeberID($string) 
+    {
         $values = explode('|', $string);
         if (count($values) < 5) {
             return null;
@@ -62,11 +66,12 @@ class API extends APIBase {
      * Control Panel OR, in the case of distributed apps, will be returned
      * from the getDataFromAweberID() function
      *
-     * @param String Consumer Key
-     * @param String Consumer Secret
+     * @param  String Consumer Key
+     * @param  String Consumer Secret
      * @return null
      */
-    public function __construct($key, $secret) {
+    public function __construct($key, $secret) 
+    {
         // Load key / secret
         $this->consumerKey    = $key;
         $this->consumerSecret = $secret;
@@ -80,7 +85,8 @@ class API extends APIBase {
      *
      * @return string The Authorization URL
      */
-    public function getAuthorizeUrl() {
+    public function getAuthorizeUrl() 
+    {
         $requestToken = $this->user->requestToken;
         return (empty($requestToken)) ?
             $this->adapter->app->getAuthorizeUrl()
@@ -91,7 +97,8 @@ class API extends APIBase {
     /**
      * Sets the adapter for use with the API
      */
-    public function setAdapter($adapter=null) {
+    public function setAdapter($adapter=null) 
+    {
         if (empty($adapter)) {
             $serviceProvider = new \AWeber\ServiceProvider();
             $adapter = new \AWeber\OAuth\Application($serviceProvider);
@@ -104,14 +111,15 @@ class API extends APIBase {
     /**
      * Fetches account data for the associated account
      *
-     * @param String Access Token (Only optional/cached if you called getAccessToken() earlier
+     * @param  String Access Token (Only optional/cached if you called getAccessToken() earlier
      *      on the same page)
-     * @param String Access Token Secret (Only optional/cached if you called getAccessToken() earlier
+     * @param  String Access Token Secret (Only optional/cached if you called getAccessToken() earlier
      *      on the same page)
      * @return Object AWeberCollection Object with the requested
      *     account data
      */
-    public function getAccount($token=false, $secret=false) {
+    public function getAccount($token=false, $secret=false) 
+    {
         if ($token && $secret) {
             $user = new User();
             $user->accessToken = $token;
@@ -127,20 +135,24 @@ class API extends APIBase {
     /**
      * PHP Automagic
      */
-    public function __get($item) {
-        if ($item == 'user') return $this->adapter->user;
+    public function __get($item) 
+    {
+        if ($item == 'user') { return $this->adapter->user;
+        }
         trigger_error("Could not find \"{$item}\"");
     }
 
     /**
      * Request a request token from AWeber and associate the
      * provided $callbackUrl with the new token
-     * @param String The URL where users should be redirected
+     *
+     * @param  String The URL where users should be redirected
      *     once they authorize your app
      * @return Array Contains the request token as the first item
      *     and the request token secret as the second item of the array
      */
-    public function getRequestToken($callbackUrl) {
+    public function getRequestToken($callbackUrl) 
+    {
         $requestToken = $this->adapter->getRequestToken($callbackUrl);
         return array($requestToken, $this->user->tokenSecret);
     }
@@ -157,7 +169,8 @@ class API extends APIBase {
      * @return Array Contains the access token as the first item
      *     and the access token secret as the second item of the array
      */
-    public function getAccessToken() {
+    public function getAccessToken() 
+    {
         return $this->adapter->getAccessToken();
     }
 }

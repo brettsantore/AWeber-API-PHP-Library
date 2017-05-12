@@ -10,7 +10,8 @@
  * @package
  * @version $id$
  */
-class APIBase {
+class APIBase
+{
 
     /**
      * Maintains data about what children collections a given object type
@@ -33,16 +34,18 @@ class APIBase {
      * Creates an object, either collection or entry, based on the given
      * URL.
      *
-     * @param mixed $url    URL for this request
+     * @param  mixed $url URL for this request
      * @access public
      * @return AWeberEntry or AWeberCollection
      */
-    public function loadFromUrl($url) {
+    public function loadFromUrl($url) 
+    {
         $data = $this->adapter->request('GET', $url);
         return $this->readResponse($data, $url);
     }
 
-    protected function _cleanUrl($url) {
+    protected function _cleanUrl($url) 
+    {
         return str_replace($this->adapter->app->getBaseUri(), '', $url);
     }
 
@@ -50,12 +53,14 @@ class APIBase {
      * readResponse
      *
      * Interprets a response, and creates the appropriate object from it.
-     * @param mixed $response   Data returned from a request to the AWeberAPI
-     * @param mixed $url        URL that this data was requested from
+     *
+     * @param  mixed $response Data returned from a request to the AWeberAPI
+     * @param  mixed $url      URL that this data was requested from
      * @access protected
      * @return mixed
      */
-    protected function readResponse($response, $url) {
+    protected function readResponse($response, $url) 
+    {
         $this->adapter->parseAsError($response);
         if (!empty($response['id']) || !empty($response['broadcast_id'])) {
             return new Entry($response, $url, $this->adapter);

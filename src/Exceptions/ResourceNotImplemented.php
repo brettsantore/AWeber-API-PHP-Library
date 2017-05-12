@@ -3,13 +3,15 @@
 /**
  * Thrown when attempting to use a resource that is not implemented.
  *
- * @uses AWeberException
+ * @uses    AWeberException
  * @package
  * @version $id$
  */
-class ResourceNotImplemented extends Exception {
+class ResourceNotImplemented extends Exception
+{
 
-    public function __construct($object, $value) {
+    public function __construct($object, $value) 
+    {
         $this->object = $object;
         $this->value = $value;
         parent::__construct("Resource \"{$value}\" is not implemented on this resource.");

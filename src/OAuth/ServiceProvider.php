@@ -21,7 +21,8 @@
  * @package
  * @version $id$
  */
-interface ServiceProvider {
+interface ServiceProvider
+{
 
     public function getAccessTokenUrl();
     public function getAuthorizeUrl();

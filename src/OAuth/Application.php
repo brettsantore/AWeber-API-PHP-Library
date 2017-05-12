@@ -26,7 +26,8 @@ use AWeber\OAuth\User;
  * @package
  * @version $id$
  */
-class Application implements Adapter {
+class Application implements Adapter
+{
     public $debug = false;
 
     public $userAgent = 'AWeber OAuth Consumer Application 1.0 - https://labs.aweber.com/';
@@ -54,10 +55,12 @@ class Application implements Adapter {
      * __construct
      *
      * Create a new OAuthApplication, based on an OAuthServiceProvider
+     *
      * @access public
      * @return void
      */
-    public function __construct($parentApp = false) {
+    public function __construct($parentApp = false) 
+    {
         if ($parentApp) {
             if (!is_a($parentApp, ServiceProvider::class)) {
                 throw new Exception('Parent App must be a valid OAuthServiceProvider!');
@@ -72,18 +75,20 @@ class Application implements Adapter {
      * request
      *
      * Implemented for a standard OAuth adapter interface
-     * @param mixed $method
-     * @param mixed $uri
-     * @param array $data
-     * @param array $options
+     *
+     * @param  mixed $method
+     * @param  mixed $uri
+     * @param  array $data
+     * @param  array $options
      * @access public
      * @return void
      */
-    public function request($method, $uri, $data = array(), $options = array()) {
+    public function request($method, $uri, $data = array(), $options = array()) 
+    {
         $uri = $this->app->removeBaseUri($uri);
         $url = $this->app->getBaseUri() . $uri;
 
-        # WARNING: non-primative items in data must be json serialized in GET and POST.
+        // WARNING: non-primative items in data must be json serialized in GET and POST.
         if ($method == 'POST' or $method == 'GET') {
             foreach ($data as $key => $value) {
                 if (is_array($value)) {
@@ -117,10 +122,12 @@ class Application implements Adapter {
      * getRequestToken
      *
      * Gets a new request token / secret for this user.
+     *
      * @access public
      * @return void
      */
-    public function getRequestToken($callbackUrl=false) {
+    public function getRequestToken($callbackUrl=false) 
+    {
         $data = ($callbackUrl)? array('oauth_callback' => $callbackUrl) : array();
         $resp = $this->makeRequest('POST', $this->app->getRequestTokenUrl(), $data);
         $data = $this->parseResponse($resp);
@@ -139,8 +146,10 @@ class Application implements Adapter {
      * @access public
      * @return void
      */
-    public function getAccessToken() {
-        $resp = $this->makeRequest('POST', $this->app->getAccessTokenUrl(),
+    public function getAccessToken() 
+    {
+        $resp = $this->makeRequest(
+            'POST', $this->app->getAccessTokenUrl(),
             array('oauth_verifier' => $this->user->verifier)
         );
         $data = $this->parseResponse($resp);
@@ -161,15 +170,18 @@ class Application implements Adapter {
      * Checks if response is an error.  If it is, raise an appropriately
      * configured exception.
      *
-     * @param mixed $response   Data returned from the server, in array form
+     * @param  mixed $response Data returned from the server, in array form
      * @access public
      * @throws OAuthException
      * @return void
      */
-    public function parseAsError($response) {
+    public function parseAsError($response) 
+    {
         if (!empty($response['error'])) {
-            throw new OAuthException($response['error']['type'],
-                $response['error']['message']);
+            throw new OAuthException(
+                $response['error']['type'],
+                $response['error']['message']
+            );
         }
     }
 
@@ -179,12 +191,13 @@ class Application implements Adapter {
      * Enforce that all the fields in requiredFields are present and not
      * empty in data.  If a required field is empty, throw an exception.
      *
-     * @param mixed $data               Array of data
-     * @param mixed $requiredFields     Array of required field names.
+     * @param  mixed $data           Array of data
+     * @param  mixed $requiredFields Array of required field names.
      * @access protected
      * @return void
      */
-    protected function requiredFromResponse($data, $requiredFields) {
+    protected function requiredFromResponse($data, $requiredFields) 
+    {
         foreach ($requiredFields as $field) {
             if (empty($data[$field])) {
                 throw new AWeberOAuthDataMissing($field);
@@ -196,12 +209,14 @@ class Application implements Adapter {
      * get
      *
      * Make a get request.  Used to exchange user tokens with serice provider.
-     * @param mixed $url        URL to make a get request from.
-     * @param array $data       Data for the request.
+     *
+     * @param  mixed $url  URL to make a get request from.
+     * @param  array $data Data for the request.
      * @access protected
      * @return void
      */
-    protected function get($url, $data) {
+    protected function get($url, $data) 
+    {
         $url = $this->_addParametersToUrl($url, $data);
         $handle = $this->curl->init($url);
         $resp = $this->_sendRequest($handle);
@@ -213,13 +228,15 @@ class Application implements Adapter {
      *
      * Adds the parameters in associative array $data to the
      * given URL
-     * @param String $url       URL
-     * @param array $data       Parameters to be added as a query string to
-     *      the URL provided
+     *
+     * @param  String $url  URL
+     * @param  array  $data Parameters to be added as a query string to
+     *                      the URL provided
      * @access protected
      * @return void
      */
-    protected function _addParametersToUrl($url, $data) {
+    protected function _addParametersToUrl($url, $data) 
+    {
         if (!empty($data)) {
             if (strpos($url, '?') === false) {
                 $url .= '?'.$this->buildData($data);
@@ -235,24 +252,29 @@ class Application implements Adapter {
      *
      * Generates a 'nonce', which is a unique request id based on the
      * timestamp.  If no timestamp is provided, generate one.
-     * @param mixed $timestamp Either a timestamp (epoch seconds) or false,
+     *
+     * @param  mixed $timestamp Either a timestamp (epoch seconds) or false,
      *  in which case it will generate a timestamp.
      * @access public
      * @return string   Returns a unique nonce
      */
-    public function generateNonce($timestamp = false) {
-        if (!$timestamp) $timestamp = $this->generateTimestamp();
-        return md5($timestamp.'-'.rand(10000,99999).'-'.uniqid());
+    public function generateNonce($timestamp = false) 
+    {
+        if (!$timestamp) { $timestamp = $this->generateTimestamp();
+        }
+        return md5($timestamp.'-'.rand(10000, 99999).'-'.uniqid());
     }
 
     /**
      * generateTimestamp
      *
      * Generates a timestamp, in seconds
+     *
      * @access public
      * @return int Timestamp, in epoch seconds
      */
-    public function generateTimestamp() {
+    public function generateTimestamp() 
+    {
         return time();
     }
 
@@ -260,16 +282,18 @@ class Application implements Adapter {
      * createSignature
      *
      * Creates a signature on the signature base and the signature key
-     * @param mixed $sigBase    Base string of data to sign
-     * @param mixed $sigKey     Key to sign the data with
+     *
+     * @param  mixed $sigBase Base string of data to sign
+     * @param  mixed $sigKey  Key to sign the data with
      * @access public
      * @return string   The signature
      */
-    public function createSignature($sigBase, $sigKey) {
+    public function createSignature($sigBase, $sigKey) 
+    {
         switch ($this->signatureMethod) {
-            case 'HMAC-SHA1':
-            default:
-                return base64_encode(hash_hmac('sha1', $sigBase, $sigKey, true));
+        case 'HMAC-SHA1':
+        default:
+            return base64_encode(hash_hmac('sha1', $sigBase, $sigKey, true));
         }
     }
 
@@ -277,11 +301,13 @@ class Application implements Adapter {
      * encode
      *
      * Short-cut for utf8_encode / rawurlencode
-     * @param mixed $data   Data to encode
+     *
+     * @param  mixed $data Data to encode
      * @access protected
      * @return void         Encoded data
      */
-    protected function encode($data) {
+    protected function encode($data) 
+    {
         return rawurlencode($data);
     }
 
@@ -292,10 +318,12 @@ class Application implements Adapter {
      * are signed with the consumerSecret for this consumer application and
      * the token secret of the user that the application is acting on behalf
      * of.
+     *
      * @access public
      * @return void
      */
-    public function createSignatureKey() {
+    public function createSignatureKey() 
+    {
         return $this->consumerSecret.'&'.$this->user->tokenSecret;
     }
 
@@ -303,10 +331,12 @@ class Application implements Adapter {
      * getOAuthRequestData
      *
      * Get all the pre-signature, OAuth specific parameters for a request.
+     *
      * @access public
      * @return void
      */
-    public function getOAuthRequestData() {
+    public function getOAuthRequestData() 
+    {
         $token = $this->user->getHighestPriorityToken();
         $ts = $this->generateTimestamp();
         $nonce = $this->generateNonce($ts);
@@ -323,11 +353,12 @@ class Application implements Adapter {
     /**
      * mergeOAuthData
      *
-     * @param mixed $requestData
+     * @param  mixed $requestData
      * @access public
      * @return void
      */
-    public function mergeOAuthData($requestData) {
+    public function mergeOAuthData($requestData) 
+    {
         $oauthData = $this->getOAuthRequestData();
         return array_merge($requestData, $oauthData);
     }
@@ -335,14 +366,16 @@ class Application implements Adapter {
     /**
      * createSignatureBase
      *
-     * @param mixed $method     String name of HTTP method, such as "GET"
-     * @param mixed $url        URL where this request will go
-     * @param mixed $data       Array of params for this request. This should
-     *      include ALL oauth properties except for the signature.
+     * @param  mixed $method String name of HTTP method, such as "GET"
+     * @param  mixed $url    URL where this request will go
+     * @param  mixed $data   Array of params for this request. This should
+     *                      include ALL oauth properties except for the
+     *                      signature.
      * @access public
      * @return void
      */
-    public function createSignatureBase($method, $url, $data) {
+    public function createSignatureBase($method, $url, $data) 
+    {
         $method = $this->encode(strtoupper($method));
         $query = parse_url($url, PHP_URL_QUERY);
         if ($query) {
@@ -365,15 +398,18 @@ class Application implements Adapter {
      *
      * Turns an array of request data into a string, as used by the oauth
      * signature
-     * @param mixed $data
+     *
+     * @param  mixed $data
      * @access public
      * @return void
      */
-    public function collapseDataForSignature($data) {
+    public function collapseDataForSignature($data) 
+    {
         ksort($data);
         $collapse = '';
         foreach ($data as $key => $val) {
-            if (!empty($collapse)) $collapse .= '&';
+            if (!empty($collapse)) { $collapse .= '&';
+            }
             $collapse .= $key.'='.$this->encode($val);
         }
         return $collapse;
@@ -384,13 +420,14 @@ class Application implements Adapter {
      *
      * Signs the request.
      *
-     * @param mixed $method     HTTP method
-     * @param mixed $url        URL for the request
-     * @param mixed $data       The data to be signed
+     * @param  mixed $method HTTP method
+     * @param  mixed $url    URL for the request
+     * @param  mixed $data   The data to be signed
      * @access public
      * @return array            The data, with the signature.
      */
-    public function signRequest($method, $url, $data) {
+    public function signRequest($method, $url, $data) 
+    {
         $base = $this->createSignatureBase($method, $url, $data);
         $key  = $this->createSignatureKey();
         $data['oauth_signature'] = $this->createSignature($base, $key);
@@ -404,36 +441,38 @@ class Application implements Adapter {
      *
      * Public facing function to make a request
      *
-     * @param mixed $method
-     * @param mixed $url  - Reserved characters in query params MUST be escaped
-     * @param mixed $data - Reserved characters in values MUST NOT be escaped
+     * @param  mixed $method
+     * @param  mixed $url    - Reserved characters in query params MUST be escaped
+     * @param  mixed $data   - Reserved characters in values MUST NOT be escaped
      * @access public
      * @return void
      */
-    public function makeRequest($method, $url, $data=array()) {
+    public function makeRequest($method, $url, $data=array()) 
+    {
 
-        if ($this->debug) echo "\n** {$method}: $url\n";
+        if ($this->debug) { echo "\n** {$method}: $url\n";
+        }
 
         switch (strtoupper($method)) {
-            case 'POST':
-                $oauth = $this->prepareRequest($method, $url, $data);
-                $resp = $this->post($url, $oauth);
-                break;
+        case 'POST':
+            $oauth = $this->prepareRequest($method, $url, $data);
+            $resp = $this->post($url, $oauth);
+            break;
 
-            case 'GET':
-                $oauth = $this->prepareRequest($method, $url, $data);
-                $resp = $this->get($url, $oauth, $data);
-                break;
+        case 'GET':
+            $oauth = $this->prepareRequest($method, $url, $data);
+            $resp = $this->get($url, $oauth, $data);
+            break;
 
-            case 'DELETE':
-                $oauth = $this->prepareRequest($method, $url, $data);
-                $resp = $this->delete($url, $oauth);
-                break;
+        case 'DELETE':
+            $oauth = $this->prepareRequest($method, $url, $data);
+            $resp = $this->delete($url, $oauth);
+            break;
 
-            case 'PATCH':
-                $oauth = $this->prepareRequest($method, $url, array());
-                $resp  = $this->patch($url, $oauth, $data);
-                break;
+        case 'PATCH':
+            $oauth = $this->prepareRequest($method, $url, array());
+            $resp  = $this->patch($url, $oauth, $data);
+            break;
         }
 
         // enable debug output
@@ -465,12 +504,13 @@ class Application implements Adapter {
      *
      * Prepare an OAuth put method.
      *
-     * @param mixed $url    URL where we are making the request to
-     * @param mixed $data   Data that is used to make the request
+     * @param  mixed $url  URL where we are making the request to
+     * @param  mixed $data Data that is used to make the request
      * @access protected
      * @return void
      */
-    protected function patch($url, $oauth, $data) {
+    protected function patch($url, $oauth, $data) 
+    {
         $url = $this->_addParametersToUrl($url, $oauth);
         $handle = $this->curl->init($url);
         $this->curl->setopt($handle, CURLOPT_CUSTOMREQUEST, 'PATCH');
@@ -484,12 +524,13 @@ class Application implements Adapter {
      *
      * Prepare an OAuth post method.
      *
-     * @param mixed $url    URL where we are making the request to
-     * @param mixed $data   Data that is used to make the request
+     * @param  mixed $url  URL where we are making the request to
+     * @param  mixed $data Data that is used to make the request
      * @access protected
      * @return void
      */
-    protected function post($url, $oauth) {
+    protected function post($url, $oauth) 
+    {
         $handle = $this->curl->init($url);
         $postData = $this->buildData($oauth);
         $this->curl->setopt($handle, CURLOPT_POST, true);
@@ -502,12 +543,14 @@ class Application implements Adapter {
      * delete
      *
      * Makes a DELETE request
-     * @param mixed $url        URL where we are making the request to
-     * @param mixed $data       Data that is used in the request
+     *
+     * @param  mixed $url  URL where we are making the request to
+     * @param  mixed $data Data that is used in the request
      * @access protected
      * @return void
      */
-    protected function delete($url, $data) {
+    protected function delete($url, $data) 
+    {
         $url = $this->_addParametersToUrl($url, $data);
         $handle = $this->curl->init($url);
         $this->curl->setopt($handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -519,11 +562,13 @@ class Application implements Adapter {
      * buildData
      *
      * Creates a string of data for either post or get requests.
-     * @param mixed $data       Array of key value pairs
+     *
+     * @param  mixed $data Array of key value pairs
      * @access public
      * @return void
      */
-    public function buildData($data) {
+    public function buildData($data) 
+    {
         ksort($data);
         $params = array();
         foreach ($data as $key => $value) {
@@ -536,18 +581,20 @@ class Application implements Adapter {
      * _sendRequest
      *
      * Actually makes a request.
-     * @param mixed $handle     Curl handle
-     * @param array $headers    Additional headers needed for request
+     *
+     * @param  mixed $handle  Curl handle
+     * @param  array $headers Additional headers needed for request
      * @access private
      * @return void
      */
-    private function _sendRequest($handle, $headers = array('Expect:')) {
+    private function _sendRequest($handle, $headers = array('Expect:')) 
+    {
         $this->curl->setopt($handle, CURLOPT_RETURNTRANSFER, true);
         $this->curl->setopt($handle, CURLOPT_HEADER, true);
         $this->curl->setopt($handle, CURLOPT_HTTPHEADER, $headers);
         $this->curl->setopt($handle, CURLOPT_USERAGENT, $this->userAgent);
-        $this->curl->setopt($handle, CURLOPT_SSL_VERIFYPEER, FALSE);
-        $this->curl->setopt($handle, CURLOPT_VERBOSE, FALSE);
+        $this->curl->setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+        $this->curl->setopt($handle, CURLOPT_VERBOSE, false);
         $this->curl->setopt($handle, CURLOPT_CONNECTTIMEOUT, 10);
         $this->curl->setopt($handle, CURLOPT_TIMEOUT, 90);
         $resp = $this->curl->execute($handle);
@@ -562,13 +609,14 @@ class Application implements Adapter {
     /**
      * prepareRequest
      *
-     * @param mixed $method     HTTP method
-     * @param mixed $url        URL for the request
-     * @param mixed $data       The data to generate oauth data and be signed
+     * @param  mixed $method HTTP method
+     * @param  mixed $url    URL for the request
+     * @param  mixed $data   The data to generate oauth data and be signed
      * @access public
      * @return void             The data, with all its OAuth variables and signature
      */
-    public function prepareRequest($method, $url, $data) {
+    public function prepareRequest($method, $url, $data) 
+    {
         $data = $this->mergeOAuthData($data);
         $data = $this->signRequest($method, $url, $data);
         return $data;
@@ -578,23 +626,28 @@ class Application implements Adapter {
      * parseResponse
      *
      * Parses the body of the response into an array
-     * @param mixed $string     The body of a response
+     *
+     * @param  mixed $string The body of a response
      * @access public
      * @return void
      */
-    public function parseResponse($resp) {
+    public function parseResponse($resp) 
+    {
         $data = array();
 
-        if (!$resp) {       return $data; }
-        if (empty($resp)) { return $data; }
-        if (empty($resp->body)) { return $data; }
+        if (!$resp) {       return $data; 
+        }
+        if (empty($resp)) { return $data; 
+        }
+        if (empty($resp->body)) { return $data; 
+        }
 
         switch ($this->format) {
-            case 'json':
-                $data = json_decode($resp->body);
-                break;
-            default:
-                parse_str($resp->body, $data);
+        case 'json':
+            $data = json_decode($resp->body);
+            break;
+        default:
+            parse_str($resp->body, $data);
         }
         $this->parseAsError($data);
         return $data;

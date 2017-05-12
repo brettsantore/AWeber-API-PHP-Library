@@ -3,11 +3,12 @@
 /**
  * Thrown when the API returns an error. (HTTP status >= 400)
  *
- * @uses Exception
+ * @uses    Exception
  * @package
  * @version $id$
  */
-class APIException extends Exception {
+class APIException extends Exception
+{
 
     public $type;
     public $status;
@@ -15,7 +16,8 @@ class APIException extends Exception {
     public $documentation_url;
     public $url;
 
-    public function __construct($error, $url) {
+    public function __construct($error, $url) 
+    {
         // record specific details of the API exception for processing
         $this->url = $url;
         $this->type = $error['type'];

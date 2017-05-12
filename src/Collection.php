@@ -6,14 +6,16 @@ use AWeber\Exceptions\Exception;
 use Countable;
 use Iterator;
 
-class Collection extends Response implements ArrayAccess, Iterator, Countable {
+class Collection extends Response implements ArrayAccess, Iterator, Countable
+{
 
     protected $pageSize = 100;
     protected $pageStart = 0;
 
-    protected function _updatePageSize() {
+    protected function _updatePageSize() 
+    {
 
-        # grab the url, or prev and next url and pull ws.size from it
+        // grab the url, or prev and next url and pull ws.size from it
         $url = $this->url;
         if (array_key_exists('next_collection_link', $this->data)) {
             $url = $this->data['next_collection_link'];
@@ -22,27 +24,28 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
             $url = $this->data['prev_collection_link'];
         }
 
-        # scan querystring for ws_size
+        // scan querystring for ws_size
         $url_parts = parse_url($url);
 
-        # we have a query string
+        // we have a query string
         if (array_key_exists('query', $url_parts)) {
             parse_str($url_parts['query'], $params);
 
-            # we have a ws_size
+            // we have a ws_size
             if (array_key_exists('ws_size', $params)) {
 
-                # set pageSize
+                // set pageSize
                 $this->pageSize = $params['ws_size'];
                 return;
             }
         }
 
-        # we dont have one, just count the # of entries
+        // we dont have one, just count the # of entries
         $this->pageSize = count($this->data['entries']);
     }
 
-    public function __construct($response, $url, $adapter) {
+    public function __construct($response, $url, $adapter) 
+    {
         parent::__construct($response, $url, $adapter);
         $this->_updatePageSize();
     }
@@ -60,33 +63,37 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      * getById
      *
      * Gets an entry object of this collection type with the given id
-     * @param mixed $id     ID of the entry you are requesting
+     *
+     * @param  mixed $id ID of the entry you are requesting
      * @access public
      * @return Entry
      */
-    public function getById($id) {
+    public function getById($id) 
+    {
         $data = $this->adapter->request('GET', "{$this->url}/{$id}");
         $url = "{$this->url}/{$id}";
         return new Entry($data, $url, $this->adapter);
     }
 
-    /** getParentEntry
+    /**
+ * getParentEntry
      *
      * Gets an entry's parent entry
      * Returns NULL if no parent entry
      */
-    public function getParentEntry(){
+    public function getParentEntry()
+    {
         $url_parts = explode('/', $this->url);
         $size = count($url_parts);
 
-        # Remove collection id and slash from end of url
+        // Remove collection id and slash from end of url
         $url = substr($this->url, 0, -strlen($url_parts[$size-1])-1);
 
         try {
             $data = $this->adapter->request('GET', $url);
             return new Entry($data, $url, $this->adapter);
         } catch (\Exception $e) {
-            return NULL;
+            return null;
         }
     }
 
@@ -99,7 +106,8 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      * @access protected
      * @return void
      */
-    protected function _type() {
+    protected function _type() 
+    {
         $urlParts = explode('/', $this->url);
         $type = array_pop($urlParts);
         return $type;
@@ -117,15 +125,16 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      *       attributes are required for creating resources.
      *
      * @access public
-     * @param params mixed  associtative array of key/value pairs.
+     * @param  params mixed  associtative array of key/value pairs.
      * @return Entry(Resource) The new resource created
      */
-    public function create($kv_pairs) {
-        # Create Resource
+    public function create($kv_pairs) 
+    {
+        // Create Resource
         $params = array_merge(array('ws.op' => 'create'), $kv_pairs);
         $data = $this->adapter->request('POST', $this->url, $params, array('return' => 'headers'));
 
-        # Return new Resource
+        // Return new Resource
         $url = $data['Location'];
         $resource_data = $this->adapter->request('GET', $url);
         return new Entry($resource_data, $url, $this->adapter);
@@ -138,25 +147,27 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      * of that collection.  Not all collections support the 'find' operation.
      * refer to https://labs.aweber.com/docs/reference/1.0 for more information.
      *
-     * @param mixed $search_data   Associative array of key/value pairs used as search filters
-     *                             * refer to https://labs.aweber.com/docs/reference/1.0 for a
-     *                               complete list of valid search filters.
-     *                             * filtering on attributes that require additional permissions to
-     *                               display requires an app authorized with those additional permissions.
+     * @param  mixed $search_data Associative array of key/value pairs used as search filters
+     *                           * refer to https://labs.aweber.com/docs/reference/1.0 for a
+     *                           complete list of valid search filters. * filtering on
+     *                           attributes that require additional permissions to display
+     *                           requires an app authorized with those additional
+     *                           permissions.
      * @access public
      * @return AWeberCollection
      */
-    public function find($search_data) {
-        # invoke find operation
+    public function find($search_data) 
+    {
+        // invoke find operation
         $params = array_merge($search_data, array('ws.op' => 'find'));
         $data = $this->adapter->request('GET', $this->url, $params);
 
-        # get total size
+        // get total size
         $ts_params = array_merge($params, array('ws.show' => 'total_size'));
         $total_size = $this->adapter->request('GET', $this->url, $ts_params, array('return' => 'integer'));
         $data['total_size'] = $total_size;
 
-        # return collection
+        // return collection
         return $this->readResponse($data, $this->url);
     }
 
@@ -167,38 +178,44 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      * http://php.net/manual/en/class.arrayaccess.php
      */
 
-    public function offsetSet($offset, $value)  {}
-    public function offsetUnset($offset)        {}
-    public function offsetExists($offset) {
+    public function offsetSet($offset, $value)  
+    {
+    }
+    public function offsetUnset($offset)        
+    {
+    }
+    public function offsetExists($offset) 
+    {
 
         if ($offset >=0 && $offset < $this->total_size) {
             return true;
         }
         return false;
     }
-    protected function _fetchCollectionData($offset) {
+    protected function _fetchCollectionData($offset) 
+    {
 
-        # we dont have a next page, we're done
+        // we dont have a next page, we're done
         if (!array_key_exists('next_collection_link', $this->data)) {
             return null;
         }
 
-        # snag query string args from collection
+        // snag query string args from collection
         $parsed = parse_url($this->data['next_collection_link']);
 
-        # parse the query string to get params
+        // parse the query string to get params
         $pairs = explode('&', $parsed['query']);
         foreach ($pairs as $pair) {
             list($key, $val) = explode('=', $pair);
             $params[$key] = $val;
         }
 
-        # calculate new args
+        // calculate new args
         $limit = $params['ws.size'];
         $pagination_offset = intval($offset / $limit) * $limit;
         $params['ws.start'] = $pagination_offset;
 
-        # fetch data, exclude query string
+        // fetch data, exclude query string
         $url_parts = explode('?', $this->url);
         $data = $this->adapter->request('GET', $url_parts[0], $params);
         $this->pageStart = $params['ws.start'];
@@ -217,7 +234,8 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
         }
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset) 
+    {
 
         if (!$this->offsetExists($offset)) {
             return null;
@@ -226,14 +244,14 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
         $limit = $this->pageSize;
         $pagination_offset = intval($offset / $limit) * $limit;
 
-        # load collection page if needed
+        // load collection page if needed
         if ($pagination_offset !== $this->pageStart) {
             $this->_fetchCollectionData($offset);
         }
 
         $entry = $this->data['entries'][$offset - $pagination_offset];
 
-        # we have an entry, cast it to an Entry and return it
+        // we have an entry, cast it to an Entry and return it
         $entry_url = $this->adapter->app->removeBaseUri($entry['self_link']);
         return new Entry($entry, $entry_url, $this->adapter);
     }
@@ -243,23 +261,28 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      */
     protected $_iterationKey = 0;
 
-    public function current() {
+    public function current() 
+    {
         return $this->offsetGet($this->_iterationKey);
     }
 
-    public function key() {
+    public function key() 
+    {
         return $this->_iterationKey;
     }
 
-    public function next() {
+    public function next() 
+    {
         $this->_iterationKey++;
     }
 
-    public function rewind() {
+    public function rewind() 
+    {
         $this->_iterationKey = 0;
     }
 
-    public function valid() {
+    public function valid() 
+    {
         return $this->offsetExists($this->key());
     }
 
@@ -269,7 +292,8 @@ class Collection extends Response implements ArrayAccess, Iterator, Countable {
      * http://www.php.net/manual/en/class.countable.php
      */
 
-    public function count() {
+    public function count() 
+    {
         return $this->total_size;
     }
 }

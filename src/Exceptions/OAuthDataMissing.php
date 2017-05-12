@@ -11,14 +11,17 @@ use AWeber\Exceptions\Exception;
  * it is not the servers' expectations that were not met, but rather
  * the expecations of the client were not met by the server.
  *
- * @uses AWeberException
+ * @uses    AWeberException
  * @package
  * @version $id$
  */
-class OAuthDataMissing extends Exception {
+class OAuthDataMissing extends Exception
+{
 
-    public function __construct($missing) {
-        if (!is_array($missing)) $missing = array($missing);
+    public function __construct($missing) 
+    {
+        if (!is_array($missing)) { $missing = array($missing);
+        }
         $this->missing = $missing;
         $required = join(', ', $this->missing);
         parent::__construct("OAuthDataMissing: Response was expected to contain: {$required}");
