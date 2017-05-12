@@ -2,6 +2,7 @@
 
 use AWeber\Curl\Curl;
 use AWeber\Exceptions\APIException;
+use AWeber\Exceptions\OAuthException;
 use AWeber\OAuth\ServiceProvider;
 use AWeber\OAuth\User;
 
@@ -162,12 +163,12 @@ class Application implements Adapter {
      *
      * @param mixed $response   Data returned from the server, in array form
      * @access public
-     * @throws AWeberOAuthException
+     * @throws OAuthException
      * @return void
      */
     public function parseAsError($response) {
         if (!empty($response['error'])) {
-            throw new \AWeberOAuthException($response['error']['type'],
+            throw new OAuthException($response['error']['type'],
                 $response['error']['message']);
         }
     }

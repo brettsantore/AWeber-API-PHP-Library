@@ -69,7 +69,7 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
      */
     public function testShouldThrowExceptionIfNotImplemented() {
         $this->adapter->clearRequests();
-        $this->setExpectedException('AWeberResourceNotImplemented');
+        $this->setExpectedException(\AWeber\Exceptions\ResourceNotImplemented::class);
         $obj = $this->entry->something_not_implemented;
         $this->assertEquals(count($this->adapter->requestsMade), 0);
     }
