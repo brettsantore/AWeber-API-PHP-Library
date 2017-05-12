@@ -1,4 +1,6 @@
 <?php
+use AWeber\OAuth\User;
+
 require_once('mock_adapter.php');
 
 if (!class_exists('Object')) {
@@ -149,7 +151,7 @@ class TestOAuthApplication extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function testOAuthUser() {
-        $user = new OAuthUser();
+        $user = new User();
 
         $this->assertFalse($user->requestToken);
         $this->assertFalse($user->tokenSecret);
@@ -171,7 +173,7 @@ class TestOAuthApplication extends PHPUnit_Framework_TestCase {
             'secret'   => 'abcdefg',
         );
 
-        $user = new OAuthUser();
+        $user = new User();
         $user->accessToken = $data['token'];
         $user->tokenSecret = $data['secret'];
 
@@ -200,7 +202,7 @@ class TestOAuthApplication extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function testGetOAuthRequestData() {
-        $this->oauth->user = new OAuthUser();
+        $this->oauth->user = new User();
         $data = $this->oauth->getOAuthRequestData();
         $tempData =  array(
             'oauth_consumer_key' => 'consumer_key',
