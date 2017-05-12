@@ -1,13 +1,12 @@
 <?php
-use AWeber\Exceptions\APIException;
+use AWeber\ServiceProvider;
 use AWeber\OAuth\Application;
+use AWeber\Exceptions\APIException;
 
 require_once('mock_data.php');
 
 function get_mock_adapter() {
-    // function to return a mock adapter
-    $serviceProvider = new \AWeberServiceProvider();
-    return new MockOAuthAdapter($serviceProvider);
+    return new MockOAuthAdapter(new ServiceProvider());
 }
 
 $map = array();
