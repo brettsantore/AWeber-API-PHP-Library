@@ -1,11 +1,4 @@
 <?php
-require_once('exceptions.php');
-require_once('oauth_adapter.php');
-require_once('oauth_application.php');
-require_once('aweber_response.php');
-require_once('aweber_collection.php');
-require_once('aweber_entry_data_array.php');
-require_once('aweber_entry.php');
 
 /**
  * AWeberServiceProvider

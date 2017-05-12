@@ -1,6 +1,4 @@
 <?php
-require_once('aweber_api/aweber_api.php');
-require_once('aweber_api/curl_object.php');
 require_once('mock_adapter.php');
 
 if (!class_exists('Object')) {

@@ -1,5 +1,4 @@
 <?php
-require_once('aweber_api/aweber_api.php');
 require_once('mock_adapter.php');
 
 class TestAWeberCollectionParentEntry extends PHPUnit_Framework_TestCase {
