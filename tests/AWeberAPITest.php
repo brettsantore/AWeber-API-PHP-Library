@@ -1,4 +1,7 @@
 <?php
+use AWeber\Entry;
+use AWeber\Response;
+
 require_once('mock_adapter.php');
 
 class TestAWeberAPI extends PHPUnit_Framework_TestCase {
@@ -64,8 +67,8 @@ class TestAWeberAPI extends PHPUnit_Framework_TestCase {
         $account = $this->aweber->getAccount($this->user['token'], $this->user['secret']);
 
         $this->assertNotNull($account);
-        $this->assertTrue(is_a($account, 'AWeberResponse'));
-        $this->assertTrue(is_a($account, 'AWeberEntry'));
+        $this->assertTrue(is_a($account, Response::class));
+        $this->assertTrue(is_a($account, Entry::class));
     }
 
     /**
@@ -77,7 +80,7 @@ class TestAWeberAPI extends PHPUnit_Framework_TestCase {
         $this->aweber->setAdapter($this->adapter);
         $list = $this->aweber->loadFromUrl('/accounts/1/lists/303449');
 
-        $this->assertTrue(is_a($list, 'AWeberEntry'));
+        $this->assertTrue(is_a($list, Entry::class));
         $this->assertEquals($list->type, 'list');
         $this->assertEquals($list->id, '303449');
     }
@@ -91,7 +94,7 @@ class TestAWeberAPI extends PHPUnit_Framework_TestCase {
         $this->aweber->setAdapter($this->adapter);
         $list = $this->aweber->loadFromUrl('/accounts/1/lists/303449/broadcasts/1337');
 
-        $this->assertTrue(is_a($list, 'AWeberEntry'));
+        $this->assertTrue(is_a($list, Entry::class));
         $this->assertEquals($list->type, 'broadcast');
         $this->assertEquals($list->broadcast_id, '1337');
     }

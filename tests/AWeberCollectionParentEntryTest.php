@@ -1,30 +1,39 @@
 <?php
+use AWeber\Collection;
+use AWeber\Entry;
+
 require_once('mock_adapter.php');
 
 class TestAWeberCollectionParentEntry extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @var Collection
+     */
+    protected $accounts;
 
     public function setUp() {
         $this->adapter = get_mock_adapter();
         $url = '/accounts/1/lists';
         $data = $this->adapter->request('GET', $url);
-        $this->lists = new AWeberCollection($data, $url, $this->adapter);
+        $this->lists = new Collection($data, $url, $this->adapter);
         $url = '/accounts';
         $data = $this->adapter->request('GET', $url);
-        $this->accounts = new AWeberCollection($data, $url, $this->adapter);
+
+        $this->accounts = new Collection($data, $url, $this->adapter);
         $url = '/accounts/1/lists/303449/custom_fields';
         $data = $this->adapter->request('GET', $url);
-        $this->customFields = new AWeberCollection($data, $url, $this->adapter);
+        $this->customFields = new Collection($data, $url, $this->adapter);
     }
 
     public function testListsParentShouldBeAccount() {
         $entry = $this->lists->getParentEntry();
-        $this->assertTrue(is_a($entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($entry, Entry::class));
         $this->assertEquals($entry->type, 'account');
     }
 
     public function testCustomFieldsParentShouldBeList() {
         $entry = $this->customFields->getParentEntry();
-        $this->assertTrue(is_a($entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($entry, Entry::class));
         $this->assertEquals($entry->type, 'list');
     }
 

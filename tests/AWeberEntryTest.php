@@ -1,4 +1,8 @@
 <?php
+use AWeber\Collection;
+use AWeber\Entry;
+use AWeber\Response;
+
 require_once('mock_adapter.php');
 
 class TestAWeberEntry extends PHPUnit_Framework_TestCase {
@@ -11,21 +15,21 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
         $this->adapter = get_mock_adapter();
         $url = '/accounts/1/lists/303449';
         $data = $this->adapter->request('GET', $url);
-        $this->entry = new AWeberEntry($data, $url, $this->adapter);
+        $this->entry = new Entry($data, $url, $this->adapter);
     }
 
     /**
      * Should be an AWeberEntry
      */
     public function testShouldBeAnAWeberEntry() {
-        $this->assertTrue(is_a($this->entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($this->entry, Entry::class));
     }
 
     /**
      * AWeberEntry should be an AWeberResponse
      */
     public function testShouldBeAnAWeberResponse() {
-        $this->assertTrue(is_a($this->entry, 'AWeberResponse'));
+        $this->assertTrue(is_a($this->entry, Response::class));
     }
 
     /**
@@ -57,7 +61,7 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
         $this->adapter->clearRequests();
         $campaigns = $this->entry->campaigns;
 
-        $this->assertTrue(is_a($campaigns, 'AWeberCollection'));
+        $this->assertTrue(is_a($campaigns, Collection::class));
         $this->assertEquals(count($this->adapter->requestsMade), 1);
         $this->assertEquals($this->adapter->requestsMade[0]['uri'],
             '/accounts/1/lists/303449/campaigns');
@@ -112,7 +116,7 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
     public function testFailedDelete() {
         $url = '/accounts/1';
         $data = $this->adapter->request('GET', $url);
-        $entry = new AWeberEntry($data, $url, $this->adapter);
+        $entry = new Entry($data, $url, $this->adapter);
 
         $this->setExpectedException(\AWeber\Exceptions\APIException::class, 'Simulated Exception');
         $entry->delete();
@@ -149,7 +153,7 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
     public function testSaveFailed() {
         $url = '/accounts/1/lists/505454';
         $data = $this->adapter->request('GET', $url);
-        $entry = new AWeberEntry($data, $url, $this->adapter);
+        $entry = new Entry($data, $url, $this->adapter);
         $entry->name = 'foobarbaz';
         $this->setExpectedException(\AWeber\Exceptions\APIException::class, 'Simulated Exception');
         $resp = $entry->save();
@@ -180,7 +184,7 @@ abstract class AccountTestCase extends PHPUnit_Framework_TestCase {
         $this->adapter = get_mock_adapter();
         $url = '/accounts/1';
         $data = $this->adapter->request('GET', $url);
-        $this->entry = new AWeberEntry($data, $url, $this->adapter);
+        $this->entry = new Entry($data, $url, $this->adapter);
     }
 }
 
@@ -218,7 +222,7 @@ class TestAccountGetWebForms extends AccountTestCase {
 
     public function testShouldHaveEntries() {
         foreach($this->forms as $entry) {
-            $this->assertTrue(is_a($entry, 'AWeberEntry'));
+            $this->assertTrue(is_a($entry, AWeber\Entry::class));
         }
     }
 
@@ -246,7 +250,7 @@ class TestAccountGetWebFormSplitTests extends AccountTestCase {
 
     public function testShouldHaveEntries() {
         foreach($this->forms as $entry) {
-            $this->assertTrue(is_a($entry, 'AWeberEntry'));
+            $this->assertTrue(is_a($entry, AWeber\Entry::class));
         }
     }
 
@@ -261,7 +265,7 @@ class TestAccountFindSubscribers extends AccountTestCase {
 
     public function testShouldSupportFindSubscribersMethod() {
         $subscribers = $this->entry->findSubscribers(array('email' => 'joe@example.com'));
-        $this->assertTrue(is_a($subscribers, 'AWeberCollection'));
+        $this->assertTrue(is_a($subscribers, Collection::class));
         $this->assertEquals(count($subscribers), 1);
         $this->assertEquals($subscribers->data['entries'][0]['self_link'],
                            'https://api.aweber.com/1.0/accounts/1/lists/303449/subscribers/1');
@@ -274,7 +278,7 @@ class TestAWeberSubscriberEntry extends PHPUnit_Framework_TestCase {
         $this->adapter = get_mock_adapter();
         $url = '/accounts/1/lists/303449/subscribers/1';
         $data = $this->adapter->request('GET', $url);
-        $this->entry = new AWeberEntry($data, $url, $this->adapter);
+        $this->entry = new Entry($data, $url, $this->adapter);
     }
 
     public function testIsSubscriber() {
@@ -319,7 +323,7 @@ class TestAWeberSubscriberEntry extends PHPUnit_Framework_TestCase {
 
     public function testShouldSupportGetActivity() {
         $activity = $this->entry->getActivity();
-        $this->assertTrue(is_a($activity, 'AWeberCollection'));
+        $this->assertTrue(is_a($activity, Collection::class));
         $this->assertEquals($activity->total_size, 1);
     }
 }
@@ -332,16 +336,16 @@ class TestAWeberMoveEntry extends PHPUnit_Framework_TestCase {
         # Get Subscriber
         $url = '/accounts/1/lists/303449/subscribers/1';
         $data = $this->adapter->request('GET', $url);
-        $this->subscriber = new AWeberEntry($data, $url, $this->adapter);
+        $this->subscriber = new Entry($data, $url, $this->adapter);
 
         $url = '/accounts/1/lists/303449/subscribers/2';
         $data = $this->adapter->request('GET', $url);
-        $this->unsubscribed = new AWeberEntry($data, $url, $this->adapter);
+        $this->unsubscribed = new Entry($data, $url, $this->adapter);
 
         # Different List
         $url = '/accounts/1/lists/505454';
         $data = $this->adapter->request('GET', $url);
-        $this->different_list = new AWeberEntry($data, $url, $this->adapter);
+        $this->different_list = new Entry($data, $url, $this->adapter);
     }
 
     /**
@@ -413,28 +417,31 @@ class TestAWeberMoveEntry extends PHPUnit_Framework_TestCase {
 
 class TestGettingEntryParentEntry extends PHPUnit_Framework_TestCase {
 
+
+    protected $adapter;
+
     public function setUp() {
         $this->adapter = get_mock_adapter();
         $url = '/accounts/1/lists/303449';
         $data = $this->adapter->request('GET', $url);
-        $this->list = new AWeberEntry($data, $url, $this->adapter);
+        $this->list = new Entry($data, $url, $this->adapter);
         $url = '/accounts/1';
         $data = $this->adapter->request('GET', $url);
-        $this->account = new AWeberEntry($data, $url, $this->adapter);
+        $this->account = new Entry($data, $url, $this->adapter);
         $url = '/accounts/1/lists/303449/custom_fields/1';
         $data = $this->adapter->request('GET', $url);
-        $this->customField = new AWeberEntry($data, $url, $this->adapter);
+        $this->customField = new Entry($data, $url, $this->adapter);
     }
 
     public function testListParentShouldBeAccount() {
         $entry = $this->list->getParentEntry();
-        $this->assertTrue(is_a($entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($entry, Entry::class));
         $this->assertEquals($entry->type, 'account');
     }
 
     public function testCustomFieldParentShouldBeList() {
         $entry = $this->customField->getParentEntry();
-        $this->assertTrue(is_a($entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($entry, Entry::class));
         $this->assertEquals($entry->type, 'list');
     }
 

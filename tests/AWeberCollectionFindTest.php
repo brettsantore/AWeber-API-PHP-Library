@@ -15,7 +15,7 @@ class TestAWeberCollectionFind extends PHPUnit_Framework_TestCase {
       */
      public function _getCollection($url) {
          $data = $this->adapter->request('GET', $url);
-         return new AWeberCollection($data, $url, $this->adapter);
+         return new \AWeber\Collection($data, $url, $this->adapter);
      }
 
      /**
@@ -37,7 +37,7 @@ class TestAWeberCollectionFind extends PHPUnit_Framework_TestCase {
         $this->assertEquals($req['uri'], $expected_url . "&ws.show=total_size");
 
         # Asserts on the returned data
-        $this->assertTrue(is_a($found_subscribers, 'AWeberCollection'));
+        $this->assertTrue(is_a($found_subscribers, AWeber\Collection::class));
         $this->assertEquals($this->adapter, $found_subscribers->adapter);
         $this->assertEquals($found_subscribers->url, $this->subscribers->url);
         $this->assertEquals($found_subscribers->total_size, 1);
@@ -62,7 +62,7 @@ class TestAWeberCollectionFind extends PHPUnit_Framework_TestCase {
         $this->assertEquals($req['uri'], $expected_url . "&ws.show=total_size");
 
         # Asserts on the returned data
-        $this->assertTrue(is_a($found_subscribers, 'AWeberCollection'));
+        $this->assertTrue(is_a($found_subscribers, AWeber\Collection::class));
         $this->assertEquals($this->adapter, $found_subscribers->adapter);
         $this->assertEquals($found_subscribers->url, $this->subscribers->url);
         $this->assertEquals($found_subscribers->total_size, 0);

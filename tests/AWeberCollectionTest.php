@@ -1,4 +1,8 @@
 <?php
+use AWeber\Collection;
+use AWeber\Entry;
+use AWeber\Response;
+
 require_once('mock_adapter.php');
 
 
@@ -7,7 +11,7 @@ class TestFindCollection extends PHPUnit_Framework_TestCase {
     public function setUp() {
         $url = '/accounts/1/lists/303449/subscribers';
         $this->adapter = get_mock_adapter();
-        $this->subscribers = new AWeberCollection(
+        $this->subscribers = new Collection(
             $this->adapter->request('GET', $url), 
             $url,
             $this->adapter);
@@ -80,7 +84,7 @@ class TestAWeberCollection extends PHPUnit_Framework_TestCase {
         $this->adapter = get_mock_adapter();
         $this->url = '/accounts/1/lists';
         $data = $this->adapter->request('GET', $this->url);
-        $this->collection = new AWeberCollection($data, $this->url, $this->adapter);
+        $this->collection = new Collection($data, $this->url, $this->adapter);
     }
 
     /**
@@ -110,8 +114,8 @@ class TestAWeberCollection extends PHPUnit_Framework_TestCase {
      */
     public function testShouldAccessEntiresAsArray() {
         $entry = $this->collection[0];
-        $this->assertTrue(is_a($entry, 'AWeberResponse'));
-        $this->assertTrue(is_a($entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($entry, Response::class));
+        $this->assertTrue(is_a($entry, Entry::class));
         $this->assertEquals($entry->id, 1701533);
     }
 
@@ -179,7 +183,7 @@ class TestAWeberCollection extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($entry->id, $id);
         $this->assertEquals($entry->name, $name);
-        $this->assertTrue(is_a($entry, 'AWeberEntry'));
+        $this->assertTrue(is_a($entry, Entry::class));
         $this->assertEquals(count($this->adapter->requestsMade), 1);
 
 

@@ -1,4 +1,8 @@
 <?php
+use AWeber\Collection;
+use AWeber\Curl\Curl;
+use AWeber\Exceptions\APIException;
+
 require_once('mock_adapter.php');
 
 /**
@@ -15,7 +19,7 @@ class TestAWeberCreateEntry extends PHPUnit_Framework_TestCase {
         # Get CustomFields
         $url = '/accounts/1/lists/303449/custom_fields';
         $data = $this->adapter->request('GET', $url);
-        $this->custom_fields = new AWeberCollection($data, $url, $this->adapter);
+        $this->custom_fields = new Collection($data, $url, $this->adapter);
 
     }
 
@@ -85,7 +89,7 @@ EOT;
         $aweber = new AWeberAPI($consumerKey, $consumerSecret);
 
         // Set up the cURL Stub
-        $stub = $this->createMock(\AWeber\Curl\Curl::class);
+        $stub = $this->createMock(Curl::class);
         $stub->expects($this->any())
              ->method('execute')
              ->will($this->onConsecutiveCalls($postCustomFieldRsp,
@@ -95,7 +99,7 @@ EOT;
         // Create an empty custom field collection to work on.
         $url = "/accounts/12345/lists/67890/custom_fields";        
         $data = json_decode($getCollectionRsp, true);       
-        $custom_fields = new AWeberCollection($data, $url, $aweber->adapter);
+        $custom_fields = new Collection($data, $url, $aweber->adapter);
         
         // Finally the actual unit test. Create the new custom field
         $rsp = $custom_fields->create(array('name' => 'Field With Spaces'));
@@ -134,7 +138,7 @@ EOT;
         $aweber = new AWeberAPI($consumerKey, $consumerSecret);
 
         // Set up the cURL Stub
-        $stub = $this->createMock(\AWeber\Curl\Curl::class);
+        $stub = $this->createMock(Curl::class);
         $stub->expects($this->any())
              ->method('execute')
              ->will($this->returnValue($postCustomFieldRsp));
@@ -143,7 +147,7 @@ EOT;
         // Create an empty custom field collection to work on.
         $url = "/accounts/12345/lists/67890/custom_fields";        
         $data = json_decode($getCollectionRsp, true);       
-        $custom_fields = new AWeberCollection($data, $url, $aweber->adapter);
+        $custom_fields = new Collection($data, $url, $aweber->adapter);
         
         // Create the new custom field
         try {
@@ -151,7 +155,7 @@ EOT;
         }
         
         // Finally the actual unit test. Verify that the create fails.
-        catch (\AWeber\Exceptions\APIException $expected){
+        catch (APIException $expected){
             $this->assertEquals($expected->status, 400);
             return;
         }

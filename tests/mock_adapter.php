@@ -1,9 +1,12 @@
 <?php
+use AWeber\Exceptions\APIException;
+use AWeber\OAuth\Application;
+
 require_once('mock_data.php');
 
 function get_mock_adapter() {
     // function to return a mock adapter
-    $serviceProvider = new AWeberServiceProvider();
+    $serviceProvider = new \AWeberServiceProvider();
     return new MockOAuthAdapter($serviceProvider);
 }
 
@@ -52,7 +55,7 @@ $map['POST'  ]['/accounts/1/lists/303449/subscribers/1'                         
 $map['POST'  ]['/accounts/1/lists/303449/subscribers/2'                                                         ] = array(400, 'error');
 
 
-class MockOAuthAdapter extends \AWeber\OAuth\Application {
+class MockOAuthAdapter extends Application {
 
     public $requestsMade = array();
 
@@ -91,7 +94,7 @@ class MockOAuthAdapter extends \AWeber\OAuth\Application {
             $msg .= 'firewall allows outbound SSL requests from your web server.';
             $error = array('message' => $msg, 'type' => 'APIUnreachableError',
                            'documentation_url' => 'https://labs.aweber.com/docs/troubleshooting');
-            throw new AWeberAPIException($error, $url);
+            throw new APIException($error, $url);
         }
 
         $headers = array();
@@ -104,7 +107,7 @@ class MockOAuthAdapter extends \AWeber\OAuth\Application {
 
         if($headers['Status-Code'] >= 400) {
             $data = json_decode($mock_data->body, true);
-            throw new \AWeber\Exceptions\APIException($data['error'], $url);
+            throw new APIException($data['error'], $url);
 
         }
         return $mock_data;
