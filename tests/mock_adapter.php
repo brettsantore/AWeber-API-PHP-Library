@@ -52,7 +52,7 @@ $map['POST'  ]['/accounts/1/lists/303449/subscribers/1'                         
 $map['POST'  ]['/accounts/1/lists/303449/subscribers/2'                                                         ] = array(400, 'error');
 
 
-class MockOAuthAdapter extends OAuthApplication {
+class MockOAuthAdapter extends \AWeber\OAuth\Application {
 
     public $requestsMade = array();
 

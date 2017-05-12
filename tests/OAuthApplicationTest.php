@@ -7,7 +7,7 @@ if (!class_exists('Object')) {
     class Object {}
 }
 
-class PatchedOAuthApplication extends OAuthApplication {
+class PatchedOAuthApplication extends \AWeber\OAuth\Application {
     
     public $signatureBase = false;    
     
@@ -28,7 +28,7 @@ class TestOAuthApplication extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
         $parentApp = false;
-        $this->oauth = new OAuthApplication($parentApp);
+        $this->oauth = new \AWeber\OAuth\Application($parentApp);
         $this->oauth->consumerSecret = 'CONSUMERSECRET';
         $this->oauth->consumerKey = 'consumer_key';
     }
