@@ -1,6 +1,7 @@
 <?php namespace AWeber\OAuth;
 
 use AWeber\Curl\Curl;
+use AWeber\Exceptions\APIException;
 use AWeber\OAuth\ServiceProvider;
 use AWeber\OAuth\User;
 
@@ -452,7 +453,7 @@ class Application implements Adapter {
 
         if($resp->headers['Status-Code'] >= 400) {
             $data = json_decode($resp->body, true);
-            throw new \AWeberAPIException($data['error'], $url);
+            throw new APIException($data['error'], $url);
         }
 
         return $resp;

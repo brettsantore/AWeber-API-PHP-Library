@@ -104,7 +104,7 @@ class MockOAuthAdapter extends \AWeber\OAuth\Application {
 
         if($headers['Status-Code'] >= 400) {
             $data = json_decode($mock_data->body, true);
-            throw new AWeberAPIException($data['error'], $url);
+            throw new \AWeber\Exceptions\APIException($data['error'], $url);
 
         }
         return $mock_data;

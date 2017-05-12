@@ -114,7 +114,7 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
         $data = $this->adapter->request('GET', $url);
         $entry = new AWeberEntry($data, $url, $this->adapter);
 
-        $this->setExpectedException('AWeberAPIException', 'Simulated Exception');
+        $this->setExpectedException(\AWeber\Exceptions\APIException::class, 'Simulated Exception');
         $entry->delete();
     }
 
@@ -151,7 +151,7 @@ class TestAWeberEntry extends PHPUnit_Framework_TestCase {
         $data = $this->adapter->request('GET', $url);
         $entry = new AWeberEntry($data, $url, $this->adapter);
         $entry->name = 'foobarbaz';
-        $this->setExpectedException('AWeberAPIException', 'Simulated Exception');
+        $this->setExpectedException(\AWeber\Exceptions\APIException::class, 'Simulated Exception');
         $resp = $entry->save();
     }
 
@@ -372,7 +372,7 @@ class TestAWeberMoveEntry extends PHPUnit_Framework_TestCase {
      public function testMove_Failure() {
 
          $this->adapter->clearRequests();
-         $this->setExpectedException('AWeberAPIException', 'Simulated Exception');
+         $this->setExpectedException(\AWeber\Exceptions\APIException::class, 'Simulated Exception');
          $this->unsubscribed->move($this->different_list);
          $this->assertEquals(sizeOf($this->adapter->requestsMade), 1);
 

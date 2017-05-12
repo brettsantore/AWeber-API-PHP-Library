@@ -151,7 +151,7 @@ EOT;
         }
         
         // Finally the actual unit test. Verify that the create fails.
-        catch (AWeberAPIException $expected){
+        catch (\AWeber\Exceptions\APIException $expected){
             $this->assertEquals($expected->status, 400);
             return;
         }
