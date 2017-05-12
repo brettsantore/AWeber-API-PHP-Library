@@ -85,7 +85,7 @@ EOT;
         $aweber = new AWeberAPI($consumerKey, $consumerSecret);
 
         // Set up the cURL Stub
-        $stub = $this->createMock('CurlObject');
+        $stub = $this->createMock(\AWeber\Curl\Curl::class);
         $stub->expects($this->any())
              ->method('execute')
              ->will($this->onConsecutiveCalls($postCustomFieldRsp,
@@ -134,7 +134,7 @@ EOT;
         $aweber = new AWeberAPI($consumerKey, $consumerSecret);
 
         // Set up the cURL Stub
-        $stub = $this->createMock('CurlObject');
+        $stub = $this->createMock(\AWeber\Curl\Curl::class);
         $stub->expects($this->any())
              ->method('execute')
              ->will($this->returnValue($postCustomFieldRsp));
