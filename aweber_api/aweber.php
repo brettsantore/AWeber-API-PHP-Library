@@ -1029,20 +1029,7 @@ class AWeberResponse extends AWeberAPIBase {
 }
 
 
-/**
- * CurlInterface
- *
- * An object-oriented shim that wraps the standard PHP cURL library.
- *
- * This interface has been created so that cURL functionality can be stubbed
- * out for unit testing, or swapped for an alternative library.
- *
- * @see curl
- * @package
- * @version $id$
- */
 
-class AWeberException extends Exception { }
 
 /**
  * Thrown when the API returns an error. (HTTP status >= 400)
@@ -1052,7 +1039,7 @@ class AWeberException extends Exception { }
  * @package
  * @version $id$
  */
-class AWeberAPIException extends AWeberException {
+class AWeberAPIException extends \AWeber\Exceptions\Exception {
 
     public $type;
     public $status;
@@ -1079,7 +1066,7 @@ class AWeberAPIException extends AWeberException {
  * @package
  * @version $id$
  */
-class AWeberResourceNotImplemented extends AWeberException {
+class AWeberResourceNotImplemented extends \AWeber\Exceptions\Exception {
 
     public function __construct($object, $value) {
         $this->object = $object;
@@ -1101,7 +1088,7 @@ class AWeberResourceNotImplemented extends AWeberException {
  * @package
  * @version $id$
  */
-class AWeberMethodNotImplemented extends AWeberException {
+class AWeberMethodNotImplemented extends \AWeber\Exceptions\Exception {
 
     public function __construct($object) {
         $this->object = $object;
@@ -1118,7 +1105,7 @@ class AWeberMethodNotImplemented extends AWeberException {
  * @package
  * @version $id$
  */
-class AWeberOAuthException extends AWeberException {
+class AWeberOAuthException extends \AWeber\Exceptions\Exception {
 
     public function __construct($type, $message) {
         $this->type = $type;
@@ -1140,7 +1127,7 @@ class AWeberOAuthException extends AWeberException {
  * @package
  * @version $id$
  */
-class AWeberOAuthDataMissing extends AWeberException {
+class AWeberOAuthDataMissing extends \AWeber\Exceptions\Exception {
 
     public function __construct($missing) {
         if (!is_array($missing)) $missing = array($missing);
@@ -1162,7 +1149,7 @@ class AWeberOAuthDataMissing extends AWeberException {
  * @package
  * @version $id$
  */
-class AWeberResponseError extends AWeberException {
+class AWeberResponseError extends \AWeber\Exceptions\Exception {
 
     public function __construct($uri) {
         $this->uri = $uri;
