@@ -16,10 +16,7 @@
   "autoload": {
     "psr-4":{
       "AWeber\\": "src"
-    },
-    "classmap": [
-      "aweber_api/"
-    ]
+    }
   },
   "require-dev": {
     "phpdocumentor/phpdocumentor": "^2.9",
