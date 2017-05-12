@@ -151,7 +151,7 @@ class Entry extends Response {
         }
         if (!empty($this->data) && array_key_exists($value, $this->data)) {
             if (is_array($this->data[$value])) {
-                $array = new \AWeberEntryDataArray($this->data[$value], $value, $this);
+                $array = new EntryDataArray($this->data[$value], $value, $this);
                 $this->data[$value] = $array;
             }
             return $this->data[$value];
