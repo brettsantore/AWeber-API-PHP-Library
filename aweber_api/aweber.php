@@ -1,5 +1,4 @@
 <?php
-use AWeber\OAuth\User;
 
 /**
  * AWeberServiceProvider
@@ -234,7 +233,7 @@ class AWeberAPI extends AWeberAPIBase {
      */
     public function getAccount($token=false, $secret=false) {
         if ($token && $secret) {
-            $user = new User();
+            $user = new AWeber\OAuth\User();
             $user->accessToken = $token;
             $user->tokenSecret = $secret;
             $this->adapter->user = $user;
@@ -1172,12 +1171,7 @@ class AWeberResponseError extends AWeberException {
 
 }
 
-interface AWeberOAuthAdapter {
 
-    public function request($method, $uri, $data = array());
-    public function getRequestToken($callbackUrl=false);
-
-}
 
 /**
  * OAuthServiceProvider
@@ -1231,7 +1225,7 @@ interface OAuthServiceProvider {
  * @package
  * @version $id$
  */
-class OAuthApplication implements AWeberOAuthAdapter {
+class OAuthApplication implements \AWeber\OAuth\Adapter {
     public $debug = false;
 
     public $userAgent = 'AWeber OAuth Consumer Application 1.0 - https://labs.aweber.com/';
@@ -1269,7 +1263,7 @@ class OAuthApplication implements AWeberOAuthAdapter {
             }
             $this->app = $parentApp;
         }
-        $this->user = new User();
+        $this->user = new AWeber\OAuth\User();
         $this->curl = new \AWeber\Curl\Curl();
     }
 
