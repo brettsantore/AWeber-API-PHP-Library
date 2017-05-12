@@ -14,6 +14,9 @@
     "issues": "https://github.com/aweber/AWeber-API-PHP-Library"
   },
   "autoload": {
+    "psr-4":{
+      "AWeber\\": "src"
+    },
     "classmap": [
       "aweber_api/"
     ]
