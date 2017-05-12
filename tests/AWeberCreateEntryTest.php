@@ -1,4 +1,5 @@
 <?php
+use AWeber\API;
 use AWeber\Collection;
 use AWeber\Curl\Curl;
 use AWeber\Exceptions\APIException;
@@ -86,7 +87,7 @@ EOT;
         // Create the AWeber object
         $consumerKey = "consumerkey";
         $consumerSecret = "consumersecret";
-        $aweber = new AWeberAPI($consumerKey, $consumerSecret);
+        $aweber = new API($consumerKey, $consumerSecret);
 
         // Set up the cURL Stub
         $stub = $this->createMock(Curl::class);
@@ -135,7 +136,7 @@ EOT;
         // Create the AWeber object
         $consumerKey = "consumerkey";
         $consumerSecret = "consumersecret";
-        $aweber = new AWeberAPI($consumerKey, $consumerSecret);
+        $aweber = new API($consumerKey, $consumerSecret);
 
         // Set up the cURL Stub
         $stub = $this->createMock(Curl::class);

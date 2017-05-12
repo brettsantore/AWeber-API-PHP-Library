@@ -1,4 +1,5 @@
 <?php
+use AWeber\API;
 use AWeber\Entry;
 use AWeber\Response;
 
@@ -12,7 +13,7 @@ class TestAWeberAPI extends PHPUnit_Framework_TestCase {
             'key'    => 'RogsGzUw3QAK6cPSI24u',
             'secret' => '1eaHAFJnEklS8qSBvitvSO6OCkaU4QyHU3AOE1rw',
         );
-        $this->aweber = new AWeberAPI($this->app['key'],
+        $this->aweber = new API($this->app['key'],
             $this->app['secret']);
 
         $this->user = array(

@@ -41,8 +41,8 @@ class Entry extends Response {
                 $attrs[$key] = $value;
             }
         }
-        if (!empty(\AWeberAPI::$_collectionMap[$this->type])) {
-            foreach (\AWeberAPI::$_collectionMap[$this->type] as $child) {
+        if (!empty(API::$_collectionMap[$this->type])) {
+            foreach (API::$_collectionMap[$this->type] as $child) {
                 $attrs[$child] = 'collection';
             }
         }
@@ -343,8 +343,8 @@ class Entry extends Response {
      */
     protected function _isChildCollection($value) {
         $this->_type();
-        if (!empty(\AWeberAPI::$_collectionMap[$this->type]) &&
-            in_array($value, \AWeberAPI::$_collectionMap[$this->type])) return true;
+        if (!empty(API::$_collectionMap[$this->type]) &&
+            in_array($value, API::$_collectionMap[$this->type])) return true;
         return false;
     }
 
